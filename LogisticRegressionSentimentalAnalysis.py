@@ -58,11 +58,23 @@ test_data_expected_output = [1 if rating > 5 else 0
                              for rating in df_test["rating"]]
 
 
-lr = LogisticRegression(C=1)
-lr.fit(training_data,training_data_output)
-predictions = lr.predict(test_data)
-print("Accuracy for C=%s: %s" % (1,accuracy_score(test_data_expected_output,predictions)))
+model = LogisticRegression(C=1,solver="lbfgs")
+model.fit(training_data,training_data_output)
+predictions = model.predict(test_data)
+print("Accuracy for C=%s is %s" % (1,accuracy_score(test_data_expected_output,predictions)))
  
+feature_to_coef = {
+    word: coef 
+    for word, coef in zip(cv.get_feature_names(),model.coef_[0])
+    }
+
+print("Positive: ")
+for best_positive in sorted(feature_to_coef.items(),key = lambda x: x[1], reverse = True)[:10]:
+    print(best_positive)
+
+print("Negative: ")
+for best_negative in sorted(feature_to_coef.items(), key = lambda x: x[1])[:10]:
+    print(best_negative)
 
 
 
