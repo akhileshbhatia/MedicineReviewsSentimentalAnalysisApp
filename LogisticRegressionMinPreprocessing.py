@@ -27,27 +27,27 @@ df_test.review = df_test.review.astype(str)
 reviews_test = df_test["review"]
 reviews_test_clean = preprocess_reviews(reviews_test)
 
-cv = CountVectorizer(binary=True)
-cv.fit(reviews_train_clean)
-training_data = cv.transform(reviews_train_clean)
+wc_vectorizer = CountVectorizer(binary=False)
+wc_vectorizer.fit(reviews_train_clean)
+training_data = wc_vectorizer.transform(reviews_train_clean)
 
 training_data_output = [1 if rating > 5 else 0
                         for rating in df_train["rating"]]
 
-test_data = cv.transform(reviews_test_clean)
+test_data = wc_vectorizer.transform(reviews_test_clean)
 
 test_data_expected_output = [1 if rating > 5 else 0
                              for rating in df_test["rating"]]
 
 
-model = LogisticRegression(C=1,solver="lbfgs")
+model = LogisticRegression(C=1,solver="lbfgs",max_iter=2000)
 model.fit(training_data,training_data_output)
 predictions = model.predict(test_data)
-print("Accuracy for C=%s is %s" % (1,accuracy_score(test_data_expected_output,predictions)))
+print("Accuracy is " ,accuracy_score(test_data_expected_output,predictions))
  
 feature_to_coef = {
     word: coef 
-    for word, coef in zip(cv.get_feature_names(),model.coef_[0])
+    for word, coef in zip(wc_vectorizer.get_feature_names(),model.coef_[0])
     }
 
 print("Positive: ")
