@@ -1,6 +1,4 @@
 '''
-Created on Jul 1, 2019
-
 @author: akhilesh
 '''
 import pandas as pd
