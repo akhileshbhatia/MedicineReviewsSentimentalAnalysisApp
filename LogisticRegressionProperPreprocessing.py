@@ -4,7 +4,7 @@
 import pandas as pd
 import re
 import html
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from nltk.corpus import stopwords
@@ -54,14 +54,14 @@ reviews_test = df_test["review"]
 reviews_test_clean = preprocess_reviews(reviews_test)
 reviews_test_clean = lemmatize_reviews(reviews_test_clean)
 
-wc_vectorizer = CountVectorizer(binary=False,ngram_range=(1,3))
-wc_vectorizer.fit(reviews_train_clean)
-training_data = wc_vectorizer.transform(reviews_train_clean)
+tfidf_vectorizer = TfidfVectorizer(ngram_range=(2,3))
+tfidf_vectorizer.fit(reviews_train_clean)
+training_data = tfidf_vectorizer.transform(reviews_train_clean)
 
 training_data_output = [1 if rating > 5 else 0
                         for rating in df_train["rating"]]
 
-test_data = wc_vectorizer.transform(reviews_test_clean)
+test_data = tfidf_vectorizer.transform(reviews_test_clean)
 
 test_data_expected_output = [1 if rating > 5 else 0
                              for rating in df_test["rating"]]
@@ -74,7 +74,7 @@ print("Accuracy is" ,accuracy_score(test_data_expected_output,predictions))
  
 feature_to_coef = {
     word: coef 
-    for word, coef in zip(wc_vectorizer.get_feature_names(),model.coef_[0])
+    for word, coef in zip(tfidf_vectorizer.get_feature_names(),model.coef_[0])
     }
  
 print("Positive: ")
