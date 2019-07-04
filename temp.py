@@ -3,7 +3,7 @@
 '''
 import pandas as pd
 import re
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 import time
@@ -17,17 +17,17 @@ def preprocess_reviews(reviews):
     return reviews
 
 start_time = time.time()
-df_train = pd.read_excel("drugs_data\\drug_data_train.xlsx",sheet_name="Obesity")
+df_train = pd.read_excel("drugs_data\\drug_data_train.xlsx",sheet_name="Multiple")
 reviews_train = df_train["review"]
 reviews_train_clean = preprocess_reviews(reviews_train)
 
 
-df_test = pd.read_excel("drugs_data\\drug_data_test.xlsx",sheet_name="Obesity")
+df_test = pd.read_excel("drugs_data\\drug_data_test.xlsx",sheet_name="Multiple")
 df_test.review = df_test.review.astype(str)
 reviews_test = df_test["review"]
 reviews_test_clean = preprocess_reviews(reviews_test)
 
-cv = TfidfVectorizer(ngram_range=(2,3))
+cv = CountVectorizer(binary=False, ngram_range=(1,2))
 cv.fit(reviews_train_clean)
 training_data = cv.transform(reviews_train_clean)
 
@@ -44,16 +44,16 @@ model = LogisticRegression(C=1,solver="lbfgs",max_iter=2000)
 model.fit(training_data,training_data_output)
 predictions = model.predict(test_data)
 print("Accuracy is " ,accuracy_score(test_data_expected_output,predictions))
- 
+  
 feature_to_coef = {
     word: coef 
     for word, coef in zip(cv.get_feature_names(),model.coef_[0])
     }
-
+ 
 print("Positive: ")
 for best_positive in sorted(feature_to_coef.items(),key = lambda x: x[1], reverse = True)[:10]:
     print(best_positive)
-
+ 
 print("Negative: ")
 for best_negative in sorted(feature_to_coef.items(), key = lambda x: x[1])[:10]:
     print(best_negative)
