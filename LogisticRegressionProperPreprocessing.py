@@ -58,13 +58,15 @@ vectorizer = TfidfVectorizer(ngram_range=(2,3))
 vectorizer.fit(reviews_train_clean)
 training_data = vectorizer.transform(reviews_train_clean)
 
-training_data_output = ["BA" if rating < 5 else "A" if rating == 5 
-                        else "AA" for rating in df_train["rating"]]
+training_data_output = ["Poor" if rating <= 3 else "Average" if rating > 3 and rating <=6 
+                        else "Good" if rating > 6 and rating <=8 else "Excellent" 
+                        for rating in df_train["rating"]]
 
 test_data = vectorizer.transform(reviews_test_clean)
 
-test_data_expected_output = ["BA" if rating < 5 else "A" if rating == 5 
-                             else "AA" for rating in df_test["rating"]]
+test_data_expected_output = ["Poor" if rating <= 3 else "Average" if rating > 3 and rating <=6 
+                             else "Good" if rating > 6 and rating <=8 else "Excellent" 
+                             for rating in df_test["rating"]]
 
 
 model = LogisticRegression(C=1,solver="lbfgs",multi_class="auto",max_iter=2000)
