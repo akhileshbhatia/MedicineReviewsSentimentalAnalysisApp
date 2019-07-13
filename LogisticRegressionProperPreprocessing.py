@@ -67,7 +67,7 @@ test_data_expected_output = ["BA" if rating < 5 else "A" if rating == 5
                              else "AA" for rating in df_test["rating"]]
 
 
-model = LogisticRegression(C=1,solver="lbfgs",multi_class="auto")
+model = LogisticRegression(C=1,solver="lbfgs",multi_class="auto",max_iter=2000)
 model.fit(training_data,training_data_output)
 predictions = model.predict(test_data)
 print("\nAccuracy is" ,accuracy_score(test_data_expected_output,predictions))
