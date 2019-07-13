@@ -54,38 +54,38 @@ reviews_test = df_test["review"]
 reviews_test_clean = preprocess_reviews(reviews_test)
 reviews_test_clean = lemmatize_reviews(reviews_test_clean)
 
-cv = TfidfVectorizer()
-cv.fit(reviews_train_clean)
-training_data = cv.transform(reviews_train_clean)
+vectorizer = TfidfVectorizer(ngram_range=(2,3))
+vectorizer.fit(reviews_train_clean)
+training_data = vectorizer.transform(reviews_train_clean)
 
-training_data_output = [1 if rating > 5 else 0
-                        for rating in df_train["rating"]]
+training_data_output = ["BA" if rating < 5 else "A" if rating == 5 
+                        else "AA" for rating in df_train["rating"]]
 
-test_data = cv.transform(reviews_test_clean)
+test_data = vectorizer.transform(reviews_test_clean)
 
-test_data_expected_output = [1 if rating > 5 else 0
-                             for rating in df_test["rating"]]
+test_data_expected_output = ["BA" if rating < 5 else "A" if rating == 5 
+                             else "AA" for rating in df_test["rating"]]
 
 
-model = LogisticRegression(C=1,solver="lbfgs")
+model = LogisticRegression(C=1,solver="lbfgs",multi_class="auto")
 model.fit(training_data,training_data_output)
 predictions = model.predict(test_data)
-print("Accuracy is" ,accuracy_score(test_data_expected_output,predictions))
+print("\nAccuracy is" ,accuracy_score(test_data_expected_output,predictions))
  
 feature_to_coef = {
     word: coef 
-    for word, coef in zip(cv.get_feature_names(),model.coef_[0])
+    for word, coef in zip(vectorizer.get_feature_names(),model.coef_[0])
     }
  
-print("Positive: ")
+print("\nPositive: ")
 for best_positive in sorted(feature_to_coef.items(),key = lambda x: x[1], reverse = True)[:10]:
     print(best_positive)
  
-print("Negative: ")
+print("\nNegative: ")
 for best_negative in sorted(feature_to_coef.items(), key = lambda x: x[1])[:10]:
     print(best_negative)
 
-print("Time taken: ", (time.time() - start_time))
+print("\nTime taken: ", (time.time() - start_time))
 
 
 
