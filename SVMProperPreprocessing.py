@@ -4,8 +4,8 @@
 import pandas as pd
 import re
 import html
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.linear_model import LogisticRegression
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -54,42 +54,36 @@ reviews_test = df_test["review"]
 reviews_test_clean = preprocess_reviews(reviews_test)
 reviews_test_clean = lemmatize_reviews(reviews_test_clean)
 
-vectorizer = CountVectorizer(binary=True, ngram_range=(1,3))
+vectorizer = TfidfVectorizer(ngram_range=(1,3))
 vectorizer.fit(reviews_train_clean)
 training_data = vectorizer.transform(reviews_train_clean)
+test_data = vectorizer.transform(reviews_test_clean)
 
 training_data_output = ["Poor" if rating <= 3 else "Average" if rating > 3 and rating <=6 
                         else "Good" if rating > 6 and rating <=8 else "Excellent" 
                         for rating in df_train["rating"]]
 
-test_data = vectorizer.transform(reviews_test_clean)
-
 test_data_expected_output = ["Poor" if rating <= 3 else "Average" if rating > 3 and rating <=6 
-                             else "Good" if rating > 6 and rating <=8 else "Excellent" 
-                             for rating in df_test["rating"]]
+                        else "Good" if rating > 6 and rating <=8 else "Excellent" 
+                        for rating in df_test["rating"]]
 
+svm = LinearSVC(C=1, max_iter=7000)
+svm.fit(training_data,training_data_output)
+predictions = svm.predict(test_data)
+print("Accuracy is ",accuracy_score(test_data_expected_output, predictions))
 
-model = LogisticRegression(C=1,solver="lbfgs",multi_class="auto",max_iter=2000)
-model.fit(training_data,training_data_output)
-predictions = model.predict(test_data)
-print("\nAccuracy is" ,accuracy_score(test_data_expected_output,predictions))
- 
 feature_to_coef = {
     word: coef 
-    for word, coef in zip(vectorizer.get_feature_names(),model.coef_[0])
+    for word, coef in zip(vectorizer.get_feature_names(),svm.coef_[0])
     }
  
-print("\nPositive: ")
+print("Positive: ")
 for best_positive in sorted(feature_to_coef.items(),key = lambda x: x[1], reverse = True)[:10]:
     print(best_positive)
  
-print("\nNegative: ")
+print("Negative: ")
 for best_negative in sorted(feature_to_coef.items(), key = lambda x: x[1])[:10]:
     print(best_negative)
 
-print("\nTime taken: ", (time.time() - start_time))
-
-
-
-
+print("Time taken: ", (time.time() - start_time))
 

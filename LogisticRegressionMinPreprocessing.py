@@ -27,7 +27,7 @@ df_test.review = df_test.review.astype(str)
 reviews_test = df_test["review"]
 reviews_test_clean = preprocess_reviews(reviews_test)
 
-vectorizer = TfidfVectorizer(ngram_range=(2,3))
+vectorizer = TfidfVectorizer()
 vectorizer.fit(reviews_train_clean)
 training_data = vectorizer.transform(reviews_train_clean)
 
