@@ -3,9 +3,9 @@
 '''
 import pandas as pd
 import re
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score,f1_score
 import time
 
 def preprocess_reviews(reviews):
@@ -27,7 +27,7 @@ df_test.review = df_test.review.astype(str)
 reviews_test = df_test["review"]
 reviews_test_clean = preprocess_reviews(reviews_test)
 
-vectorizer = TfidfVectorizer()
+vectorizer = CountVectorizer(binary=True,ngram_range=(1,3))
 vectorizer.fit(reviews_train_clean)
 training_data = vectorizer.transform(reviews_train_clean)
 
@@ -46,6 +46,7 @@ model = LogisticRegression(C=1,solver="lbfgs",max_iter=2000,multi_class="auto")
 model.fit(training_data,training_data_output)
 predictions = model.predict(test_data)
 print("\nAccuracy is " ,accuracy_score(test_data_expected_output,predictions))
+print("\nF1 score is ",f1_score(test_data_expected_output,predictions,average="micro"))
   
 feature_to_coef = {
     word: coef 

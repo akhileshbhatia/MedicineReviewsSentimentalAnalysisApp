@@ -4,7 +4,7 @@
 '''
 import pandas as pd
 import re
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score
 import time
@@ -30,7 +30,7 @@ df_test.review = df_test.review.astype(str)
 reviews_test = df_test["review"]
 reviews_test_clean = preprocess_reviews(reviews_test)
 
-vectorizer = TfidfVectorizer(ngram_range=(1,2))
+vectorizer = CountVectorizer(binary=True,ngram_range=(1,3))
 vectorizer.fit(reviews_train_clean)
 training_data = vectorizer.transform(reviews_train_clean)
 test_data = vectorizer.transform(reviews_test_clean)
