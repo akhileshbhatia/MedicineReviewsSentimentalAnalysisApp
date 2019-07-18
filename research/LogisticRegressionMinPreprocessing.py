@@ -17,12 +17,12 @@ def preprocess_reviews(reviews):
     return reviews
 
 start_time = time.time()
-df_train = pd.read_excel("drugs_data\\drug_data_train.xlsx",sheet_name="Obesity")
+df_train = pd.read_excel("F:\\UCC Notes\\Dissertation\\Code\\PythonApp\\drugs_data_original\\drug_data_train.xlsx",sheet_name="Multiple")
 reviews_train = df_train["review"]
 reviews_train_clean = preprocess_reviews(reviews_train)
 
 
-df_test = pd.read_excel("drugs_data\\drug_data_test.xlsx",sheet_name="Obesity")
+df_test = pd.read_excel("F:\\UCC Notes\\Dissertation\\Code\\PythonApp\\drugs_data_original\\drug_data_test.xlsx",sheet_name="Multiple")
 df_test.review = df_test.review.astype(str)
 reviews_test = df_test["review"]
 reviews_test_clean = preprocess_reviews(reviews_test)

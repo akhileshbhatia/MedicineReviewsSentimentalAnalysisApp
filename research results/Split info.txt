@@ -8,12 +8,9 @@ Three Level:
 5 => A
 6-10 => AA
 
-F1 score => 0.95
 
 Four Level:
 1 - 3 => Poor
 4 - 6 => Average
 7 - 8 => Good
 9 - 10 => Excellent
-
-F1 score=> 0.87
