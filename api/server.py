@@ -2,17 +2,20 @@
 Created on Jul 18, 2019
 '''
 from flask import Flask,jsonify
-from training import trainModel
 
 app = Flask(__name__)
 
 @app.route("/api/train")
-def trainData():
+def train():
+    from training import trainModel
     message = trainModel()
-    if message == "Training complete":
-        return jsonify(status = "training complete")
-    
-    return jsonify(status = "some error in training")
+    return jsonify(status = message)
+
+@app.route("/api/assignWeightToDates")
+def weightAssignment():
+    from assignWeightToDates import assignWeight
+    message = assignWeight()
+    return jsonify(status = message)
 
 if __name__ == "__main__":
-    app.run(debug = True)
+    app.run(debug=True)

@@ -1,0 +1,11 @@
+
+-------------------------------------------------
+Request to assign weight to dates started on 2019-07-19 11:27:28.974401
+Weight calculation done for the sheet Multiple
+Weight saved to file
+Weight calculation completed in 4.18 seconds
+-------------------------------------------------
+Request to assign weight to dates started on 2019-07-19 11:43:20.747278
+Weight calculation done for the sheet Multiple
+Weight saved to file
+Weight calculation completed in 3.10 seconds

@@ -18,12 +18,12 @@ def preprocess_reviews(reviews):
     return reviews
 
 def trainModel():
-    loggingText =[]
-    loggingText.append("\n-------------------------------------------------------------------------")
+    f = open("training_log.txt", "a")
+    f.write("\n-------------------------------------------------------------------------")
     start_time = time.time()
-    loggingText.append("\nTraining model function called at: " + str(datetime.today()))
+    f.write("\nTraining model function called at: " + str(datetime.today()))
     sheet = "Multiple"
-    loggingText.append("\nTraining for sheet: "+sheet)
+    f.write("\nTraining for sheet: "+sheet)
     df_train = pd.read_excel("F:\\UCC Notes\\Dissertation\\Code\\PythonApp\\drugs_data_original\\drug_data_train.xlsx",sheet_name=sheet)
     reviews_train = df_train["review"]
     reviews_train_clean = preprocess_reviews(reviews_train)
@@ -56,17 +56,13 @@ def trainModel():
 #     something = predictions.toarray().tolist()
 #     print(type(something))
     df_test["review_classification"] = predictions
-    df_test.to_excel("trained_dataset.xlsx",sheet_name=sheet)
-    loggingText.append("\nTrained data saved to file")
+    df_test.to_excel("trained_dataset.xlsx",sheet_name=sheet,index=False)
+    f.write("\nTrained data saved to file")
     
     accuracy = accuracy_score(test_data_expected_output,predictions)
     
-    loggingText.append("\nTraining completed in " + str("{0:.2f}".format(time.time() - start_time)) +" seconds with accuracy score " + str(accuracy))
-    f = open("log.txt", "a")
-    f.write("".join(loggingText))
+    f.write("\nTraining completed in " + str("{0:.2f}".format(time.time() - start_time)) +" seconds with accuracy score " + str(accuracy))
+    
     f.close()
     
     return "Training complete"
-
-trainModel()
-print("done")
