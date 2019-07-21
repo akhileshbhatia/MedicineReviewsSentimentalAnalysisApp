@@ -8,6 +8,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 import time
 from _datetime import datetime
+from common_utilities import getSheetName
 
 def preprocess_reviews(reviews):
     REPLACE_NO_SPACE = re.compile("[.;:!\'?,\"()\[\]]")
@@ -22,7 +23,7 @@ def trainModel():
     f.write("\n-------------------------------------------------------------------------")
     start_time = time.time()
     f.write("\nTraining model function called at: " + str(datetime.today()))
-    sheet = "Multiple"
+    sheet = getSheetName()
     f.write("\nTraining for sheet: "+sheet)
     df_train = pd.read_excel("F:\\UCC Notes\\Dissertation\\Code\\PythonApp\\drugs_data_original\\drug_data_train.xlsx",sheet_name=sheet)
     reviews_train = df_train["review"]

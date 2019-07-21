@@ -5,6 +5,7 @@ import pandas as pd
 from _datetime import datetime
 import os.path
 import time
+from common_utilities import getSheetName
 
 def assignWeight():
     
@@ -22,7 +23,7 @@ def assignWeight():
     f.write("\n-------------------------------------------------")
     f.write("\nRequest to assign weight to dates started on "+ str(today))
     
-    sheet = "Multiple"
+    sheet = getSheetName()
     df = pd.read_excel(fileName,sheet_name=sheet) 
     df.sort_values(by="date",ascending=False,inplace=True)
     
@@ -42,7 +43,7 @@ def assignWeight():
     
     f.write("\nWeight calculation done for the sheet "+sheet)
     
-    df["dateWeights"] = weightedDays
+    df["date_weights"] = weightedDays
     
     df.to_excel(fileName,sheet_name=sheet,index=False)
     

@@ -13,7 +13,7 @@ def train():
 
 @app.route("/api/assignWeightToDates")
 def weightAssignment():
-    from assignWeightToDates import assignWeight
+    from assign_weight_to_dates import assignWeight
     message = assignWeight()
     return jsonify(status = message)
 
