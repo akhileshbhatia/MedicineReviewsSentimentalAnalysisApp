@@ -54,10 +54,10 @@ def trainModel():
     model.fit(training_data,training_data_output)
     
     predictions = model.predict(test_data)
-#     something = predictions.toarray().tolist()
-#     print(type(something))
     df_test["review_classification"] = predictions
+
     df_test.to_excel("trained_dataset.xlsx",sheet_name=sheet,index=False)
+    
     f.write("\nTrained data saved to file")
     
     accuracy = accuracy_score(test_data_expected_output,predictions)
