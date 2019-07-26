@@ -3,7 +3,7 @@ Created on Jul 21, 2019
 '''
 import pandas as pd
 import common_utilities as cu
-import time
+# import time
 
 def getConditionFromDrug(drugName): #returns first matching row to the drug. returns message if no condition found
     global df
@@ -21,12 +21,18 @@ def getGroupedDataframeByCondition(condition): #returns the usefulCount
         
 def getAlternatives(drugName):
     global df
+    sheet = cu.getSheetName()
+    df = pd.read_excel("trained_dataset.xlsx",sheet_name=sheet)  
     condition = getConditionFromDrug(drugName)
     if condition != "":
         groupedDF = getGroupedDataframeByCondition(condition)
         return getRanking(groupedDF)
     else:
         return "Drug not found"
+
+# def getTopDrugsByCondition(condition):
+#     groupedDF = getGroupedDataframeByCondition(condition)
+#     return getRanking(groupedDF)
 
 def getRanking(groupedDF):
     classificationMap = cu.getReviewClassificationWeights()
@@ -39,10 +45,11 @@ def getRanking(groupedDF):
         for i in range(len(dateWeights)):
             alternativeWithScores[drugName] += usefulCount[i] * classificationMap.get(reviewClassification[i]) * dateWeights[i]
     
+    return dict((x,y) for x,y in sorted(alternativeWithScores.items(), key = lambda x : x[1], reverse = True))
     
-    for data in sorted(alternativeWithScores.items(), key = lambda x : x[1], reverse = True):
-        print("\n",data)
-        getDrugClassificationDetails(data[0])
+#     for data in sorted(alternativeWithScores.items(), key = lambda x : x[1], reverse = True):
+#         print("\n",data)
+#         getDrugClassificationDetails(data[0])
 
 def getDrugClassificationDetails(drugName):        
     global df
@@ -63,8 +70,7 @@ def printDetails(filteredDF,reviewType):
         print(dateStrings)
         print("Sum of useful count => ", sum(sortedDF.usefulCount.tolist()))
           
-start_time = time.time()
-sheet = cu.getSheetName()
-df = pd.read_excel("trained_dataset.xlsx",sheet_name=sheet)            
-getAlternatives("Duloxetine")
-print("\n\nTime taken => ", time.time() - start_time)
+# start_time = time.time()
+df = None          
+# getAlternatives("Duloxetine")
+# print("\n\nTime taken => ", time.time() - start_time)
