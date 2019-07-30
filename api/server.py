@@ -28,10 +28,7 @@ def alternatives():
 @app.route("/api/pharmacies")
 def pharmacies():
     from pharmacy_info import getPharmaciesHavingDrug
-    message = getPharmaciesHavingDrug(request.args.get("drugName"))
-    result = {}
-    result["info"] = message[0]
-    result["details"] = message[1:]
+    result = getPharmaciesHavingDrug(request.args.get("drugName"))
     return result
 
 if __name__ == "__main__":
