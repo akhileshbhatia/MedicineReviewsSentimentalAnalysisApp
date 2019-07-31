@@ -10,8 +10,7 @@ def createConnection():
     except:
         return "Something went wrong while connecting to database"
 
-def postProcessRawData(rawData): 
-    return None
+
 def getPharmaciesHavingDrug(drugName):
     returnValue = {}
     connection = createConnection()
@@ -27,21 +26,16 @@ def getPharmaciesHavingDrug(drugName):
     ORDER by drug.condition_name, info.quantity DESC")
     rowHeaders = [x[0] for x in cursor.description]
     data = cursor.fetchall()
+    connection.close()
     if len(data) == 0:
         return "No such drug exists"
     else:
-        rawData = {}
-        detailsList = []
-        conditionInfo = {}
         for result in data:
             obj = dict(zip(rowHeaders,result))
-            condition = obj["condition_name"] 
-            if condition in conditionInfo:
-                conditionInfo[condition] += 1
-            else:
-                conditionInfo[condition] = 1
-            detailsList.append(obj)
-        
-        return postProcessRawData(rawData)
-    connection.close()
+            condition = obj["condition_name"]
+            if condition not in returnValue:
+                returnValue[condition] = []
+            obj.pop("condition_name") 
+            returnValue[condition].append(obj)
+        return returnValue
 # print(getPharmaciesHavingDrug("Duloxetine"))
