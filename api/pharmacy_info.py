@@ -15,27 +15,24 @@ def getPharmaciesHavingDrug(drugName):
     returnValue = {}
     connection = createConnection()
     if connection == "Something went wrong while connecting to database":
-        returnValue["info"] = connection
+        returnValue["error"] = connection
         return returnValue
     
     cursor = connection.cursor()
-    cursor.execute("SELECT store.name,store.latitude,store.longitude,info.quantity, drug.condition_name from store\
-    INNER JOIN store_drug_info info ON store.store_id = info.store_id\
-    INNER JOIN drug ON info.drug_id = drug.drug_id \
-    WHERE drug.drug_name = '"+drugName+"' \
-    ORDER by drug.condition_name, info.quantity DESC")
+    cursor.execute("SELECT pharmacy.name,pharmacy.latitude as lat,pharmacy.longitude as lng,info.quantity from pharmacy\
+    INNER JOIN pharmacy_drug info ON pharmacy.id = info.pharmacy_id\
+    INNER JOIN drug ON info.drug_id = drug.id \
+    WHERE drug.name = '"+drugName+"'")
     rowHeaders = [x[0] for x in cursor.description]
     data = cursor.fetchall()
     connection.close()
     if len(data) == 0:
         return "No such drug exists"
     else:
+        details = []
         for result in data:
             obj = dict(zip(rowHeaders,result))
-            condition = obj["condition_name"]
-            if condition not in returnValue:
-                returnValue[condition] = []
-            obj.pop("condition_name") 
-            returnValue[condition].append(obj)
+            details.append(obj)
+        returnValue["details"] = details
         return returnValue
 # print(getPharmaciesHavingDrug("Duloxetine"))
