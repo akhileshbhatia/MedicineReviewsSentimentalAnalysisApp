@@ -1,0 +1,8 @@
+---auto increment id column in pharmacy_drug table---
+ALTER TABLE pharmacy_drug MODIFY COLUMN id int AUTO_INCREMENT
+
+---insert pharmacy_id and drug_id in pharmacy_drug table---
+INSERT INTO pharmacy_drug (pharmacy_id,drug_id) SELECT pharmacy.id, drug.id FROM pharmacy CROSS JOIN drug
+
+---insert quantity in pharmacy_drug table---
+UPDATE pharmacy_drug SET quantity = FLOOR((RAND * 201))

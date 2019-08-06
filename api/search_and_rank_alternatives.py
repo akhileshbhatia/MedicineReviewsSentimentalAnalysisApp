@@ -19,14 +19,14 @@ def getGroupedDataframeByCondition(condition): #returns the usefulCount
     return filteredDF.groupby("drugName")["usefulCount","review_classification","date_weights"].agg(list)
     
         
-def getAlternatives(drugName):
+def getAlternatives(req):
     global df
     sheet = cu.getSheetName()
     df = pd.read_excel("trained_dataset.xlsx",sheet_name=sheet)  
-    condition = getConditionFromDrug(drugName)
+    condition = getConditionFromDrug(req["drugName"])
     if condition != "":
         groupedDF = getGroupedDataframeByCondition(condition)
-        return getRanking(groupedDF)
+        return getRanking(groupedDF,req)
     else:
         return "Drug not found"
 
@@ -34,7 +34,7 @@ def getAlternatives(drugName):
 #     groupedDF = getGroupedDataframeByCondition(condition)
 #     return getRanking(groupedDF)
 
-def getRanking(groupedDF):
+def getRanking(groupedDF,req):
     classificationMap = cu.getReviewClassificationWeights()
     alternativeWithScores = {}
     for drugName in groupedDF.index:
@@ -43,13 +43,24 @@ def getRanking(groupedDF):
         reviewClassification = groupedDF.loc[drugName]["review_classification"]
         dateWeights = groupedDF.loc[drugName]["date_weights"] 
         for i in range(len(dateWeights)):
-            alternativeWithScores[drugName] += usefulCount[i] * classificationMap.get(reviewClassification[i]) * dateWeights[i]
+            if req["considerUsefulCount"] == False:
+                usefulCount[i] = 1
+            if req["considerClassificationScore"] == False:
+                reviewClassification[i] = 1
+            if req["considerDateWeights"] == False:
+                dateWeights[i] = 1
+            alternativeWithScores[drugName] += usefulCount[i] * classificationMap.get(reviewClassification[i]) * (dateWeights[i])
     
-    return dict((x,y) for x,y in sorted(alternativeWithScores.items(), key = lambda x : x[1], reverse = True))
+    output = dict((x,y) for x,y in sorted(alternativeWithScores.items(), key = lambda x : x[1], reverse = True))
+    output.pop(req["drugName"])
+#     print(output)
+    return output
     
 #     for data in sorted(alternativeWithScores.items(), key = lambda x : x[1], reverse = True):
 #         print("\n",data)
 #         getDrugClassificationDetails(data[0])
+        
+
 
 def getDrugClassificationDetails(drugName):        
     global df

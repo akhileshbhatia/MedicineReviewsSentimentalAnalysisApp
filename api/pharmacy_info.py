@@ -5,7 +5,7 @@ import mysql.connector
 
 def createConnection():
     try:
-        connection = mysql.connector.connect(host="127.0.0.1", database="thesis_project_ucc",user="root",password="")
+        connection = mysql.connector.connect(host="127.0.0.1", database="thesis_ucc",user="root",password="")
         return connection
     except:
         return "Something went wrong while connecting to database"
