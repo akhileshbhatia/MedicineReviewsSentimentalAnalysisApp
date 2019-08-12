@@ -46,13 +46,19 @@ def getRanking(groupedDF,req):
             if req["considerUsefulCount"] == False:
                 usefulCount[i] = 1
             if req["considerClassificationScore"] == False:
-                reviewClassification[i] = 1
+                reviewClassification[i] = ""
             if req["considerDateWeights"] == False:
                 dateWeights[i] = 1
             alternativeWithScores[drugName] += usefulCount[i] * classificationMap.get(reviewClassification[i]) * (dateWeights[i])
     
+#     process results
+    alternativeWithScores.pop(req["drugName"])
+    for key,val in alternativeWithScores.copy().items():
+        if "/" in key:
+            alternativeWithScores.pop(key)
+        
     output = dict((x,y) for x,y in sorted(alternativeWithScores.items(), key = lambda x : x[1], reverse = True))
-    output.pop(req["drugName"])
+    
 #     print(output)
     return output
     
