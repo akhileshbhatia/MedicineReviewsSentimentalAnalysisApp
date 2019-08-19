@@ -17,6 +17,7 @@ def preprocess_reviews(reviews):
     reviews = [REPLACE_WITH_SPACE.sub(" ", line) for line in reviews]
     
     return reviews
+    
 
 def trainModel():
     f = open("training_log.txt", "a")
@@ -54,6 +55,9 @@ def trainModel():
     model.fit(training_data,training_data_output)
     
     predictions = model.predict(test_data)
+    
+    plotAndSaveFile(test_data_expected_output, predictions)
+    
     df_test["review_classification"] = predictions
 
     df_test.to_excel("trained_dataset.xlsx",sheet_name=sheet,index=False)
